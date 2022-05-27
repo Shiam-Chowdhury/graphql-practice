@@ -340,7 +340,7 @@ let reviews = [
   },
 ];
 
-module.exports = {
+exports.db = {
     products,
     categories,
     reviews

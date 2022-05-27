@@ -1,7 +1,7 @@
 const { v4: uuid } = require("uuid");
 
 exports.Mutation = {
-    addCategory: (parent, {input}, {categories}) => {
+    addCategory: (parent, {input}, {db}) => {
         const {name} = input;
         
         const newCategory = {
@@ -9,12 +9,12 @@ exports.Mutation = {
             name: name
         };
 
-        categories.push(newCategory);
+        db.categories.push(newCategory);
 
         return newCategory;
     },
 
-    addProduct: (parent, {input}, {products}) => {
+    addProduct: (parent, {input}, {db}) => {
         const {
             name,
             description,
@@ -36,12 +36,12 @@ exports.Mutation = {
             categoryId
         };
 
-        products.push(newProduct);
+        db.products.push(newProduct);
 
         return newProduct;
     },
 
-    addReview: (parent, {input}, {reviews}) => {
+    addReview: (parent, {input}, {db}) => {
         const {
             date,
             title,
@@ -59,9 +59,34 @@ exports.Mutation = {
             productId,
         };
 
-        reviews.push(newReview);
+        db.reviews.push(newReview);
 
         return newReview;
+    },
+
+    deleteCategory: (parent, {id}, {db}) => {
+        db.categories = db.categories.filter(category => category.id !== id);
+
+        db.products = db.products.map(product => {
+            if(product.categoryId === id){
+                return {
+                    ...product,
+                    categoryId: null
+                }
+            }else{
+                return product
+            }
+        })
+
+        return true;
+    },
+
+    deleteProduct: (parent, {id}, {db}) => {
+        db.products = db.products.filter(product => product.id !== id);
+
+        db.reviews = db.reviews.filter(review => review.productId !== id);
+
+        return true;
     }
 }
 
